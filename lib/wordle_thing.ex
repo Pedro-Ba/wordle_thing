@@ -65,19 +65,15 @@ defmodule WordleThing do
     Enum.sort_by(alphabet_map, fn {_k, v} -> v end, :desc);
   end
 
-  def thing(alphabet_map) do
+  def top_N_letters(alphabet_map, n) do #potential for other words later? need to think about this a bit more
+    Enum.take(alphabet_map, n);
+  end
+
+  def print_alphabet_map(alphabet_map) do
     Enum.each(alphabet_map, fn x ->
       {letter, count} = x;
       IO.puts("The letter #{letter} has a count of #{count}")
     end)
 
-    #get top five now and then simply find a word with a regex for it?
-
-    top_five = Enum.take(alphabet_map, 5);
-
-    Enum.each(top_five, fn x ->
-      {letter, count} = x;
-      IO.puts("The letter #{letter} has a count of #{count}")
-    end)
   end
 end
