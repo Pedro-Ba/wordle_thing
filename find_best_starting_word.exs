@@ -41,8 +41,20 @@ alphabet_map =
     end)
   end)
 
-Enum.each(alphabet_map, fn x ->
-    {letter, count} = x;
-    IO.puts("The letter #{letter} has a count of #{count}") 
-end);
+alphabet_map_descending = Enum.sort_by(alphabet_map, fn {_k, v} -> v end, :desc); #this gives us the letters ordered by count (value), descending.
+
+Enum.each(alphabet_map_descending, fn x ->
+  {letter, count} = x;
+  IO.puts("The letter #{letter} has a count of #{count}")
+end)
+
+#get top five now and then simply find a word with a regex for it?
+
+top_five = Enum.take(alphabet_map_descending, 5);
+
+Enum.each(top_five, fn x ->
+  {letter, count} = x;
+  IO.puts("The letter #{letter} has a count of #{count}")
+end)
+
 
