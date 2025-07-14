@@ -69,6 +69,29 @@ defmodule WordleThing do
     Enum.take(alphabet_map, n);
   end
 
+  def composed_of_top_letters(word, top_letters) do
+    word_letters = String.graphemes(word);
+      Enum.all?(top_letters, fn letter ->
+        letter in word_letters #need to check if the top letters are all in the word, not the opposite.
+      end)
+  end
+
+  def valid_words_from_top_letters(word_list, top_letters_map) do
+    letters_list = Enum.map(top_letters_map, fn {k, _v} -> k end);
+    #   new_word_list = [];
+    #   Enum.reduce(word_list, new_word_list, fn word, new_word_list ->
+    #     if composed_of_top_letters(word, letters_list) do
+    #       [word | new_word_list]
+    #     else
+    #       new_word_list
+    #     end
+    #   end)
+
+    Enum.filter(word_list, fn word ->
+      composed_of_top_letters(word, letters_list)
+    end) 
+  end
+
   def print_alphabet_map(alphabet_map) do
     Enum.each(alphabet_map, fn x ->
       {letter, count} = x;
