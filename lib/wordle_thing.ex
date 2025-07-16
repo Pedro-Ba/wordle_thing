@@ -77,7 +77,6 @@ defmodule WordleThing do
   end
 
   def valid_words_from_top_letters(word_list, top_letters_map) do
-    letters_list = Enum.map(top_letters_map, fn {k, _v} -> k end);
     #   new_word_list = [];
     #   Enum.reduce(word_list, new_word_list, fn word, new_word_list ->
     #     if composed_of_top_letters(word, letters_list) do
@@ -86,10 +85,24 @@ defmodule WordleThing do
     #       new_word_list
     #     end
     #   end)
-
     Enum.filter(word_list, fn word ->
-      composed_of_top_letters(word, letters_list)
+      composed_of_top_letters(word, top_letters_map)
     end) 
+  end
+
+  def position_frequency_of_given_letters(word_list, letter_map) do
+    Enum.reduce(word_list, %{}, fn word, accumulator ->
+      word_letters = String.graphemes(word) |> Enum.with_index();
+      Enum.reduce(word_letters, accumulator, fn {letter, index}, accumulator ->
+        if letter in letter_map do
+          Map.update(accumulator, index, %{letter => 1}, fn inner_map ->
+            Map.update(inner_map, letter, 1, &(&1 + 1))
+          end)
+        else
+          accumulator
+        end
+      end)
+    end)
   end
 
   def print_alphabet_map(alphabet_map) do
