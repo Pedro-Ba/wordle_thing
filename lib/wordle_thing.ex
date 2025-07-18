@@ -71,20 +71,12 @@ defmodule WordleThing do
 
   def composed_of_top_letters(word, top_letters) do
     word_letters = String.graphemes(word);
-      Enum.all?(top_letters, fn letter ->
+      Enum.any?(top_letters, fn letter ->
         letter in word_letters #need to check if the top letters are all in the word, not the opposite.
       end)
   end
 
   def valid_words_from_top_letters(word_list, top_letters_map) do
-    #   new_word_list = [];
-    #   Enum.reduce(word_list, new_word_list, fn word, new_word_list ->
-    #     if composed_of_top_letters(word, letters_list) do
-    #       [word | new_word_list]
-    #     else
-    #       new_word_list
-    #     end
-    #   end)
     Enum.filter(word_list, fn word ->
       composed_of_top_letters(word, top_letters_map)
     end) 
@@ -105,14 +97,15 @@ defmodule WordleThing do
     end)
   end
 
-  def get_best_word_from_frequency(_word_list, valid_words, letter_map) do
-    word_values = Enum.map(valid_words, fn word -> 
+  def get_best_word_from_frequency(_word_list, possible_guesses, letter_map) do
+    word_values = Enum.map(possible_guesses, fn word -> 
       letters_word = String.graphemes(word) |> Enum.with_index();
       word_score = Enum.reduce(letters_word, 0, fn {letter, index}, acc ->
         acc + Map.get(letter_map[index], letter, 0);
       end)
       {word, word_score}
     end)
+    IO.inspect(word_values);
     best_word = Enum.max_by(word_values, fn{_k, v} -> v end);
     best_word
   end
@@ -122,6 +115,5 @@ defmodule WordleThing do
       {letter, count} = x;
       IO.puts("The letter #{letter} has a count of #{count}")
     end)
-
   end
 end

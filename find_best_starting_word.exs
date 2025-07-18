@@ -1,5 +1,19 @@
-#word_list = WordleThing.read_word_list();
-#alphabet_map = WordleThing.alphabet_map();
+
+
+
+
+
+
+
+word_list = WordleThing.read_word_list();
+alphabet_map = WordleThing.alphabet_map();
+GameLoop.gameloop(word_list, word_list, alphabet_map);
+
+
+
+
+
+
 #alphabet_counted = WordleThing.count_letters(word_list, alphabet_map);
 #alphabet_sorted = WordleThing.sort_alphabet_descending(alphabet_counted);
 #top_five_map = Enum.map(WordleThing.top_N_letters(alphabet_sorted, 5), fn {k, _v} -> k end);
@@ -22,4 +36,3 @@
 #
 #IO.puts(best_word);
 
-GameLoop.hello_world();
