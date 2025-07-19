@@ -71,7 +71,7 @@ defmodule WordleThing do
 
   def composed_of_top_letters(word, top_letters) do
     word_letters = String.graphemes(word);
-      Enum.any?(top_letters, fn letter ->
+      Enum.all?(top_letters, fn letter ->
         letter in word_letters #need to check if the top letters are all in the word, not the opposite.
       end)
   end
