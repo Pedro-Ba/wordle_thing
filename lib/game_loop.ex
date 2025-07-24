@@ -31,7 +31,7 @@ defmodule GameLoop do
     best_guess = WordleThing.get_best_pruned_word_from_frequency(total_word_list, possible_guesses, frequency_map);
     IO.puts("Best guess from pruned words below");
     IO.inspect(best_guess);
-  # best_guess_not_pruned = WordleThing.get_best_all_word_from_frequency(total_word_list, possible_guesses, frequency_map);
+  # best_guess = WordleThing.get_best_all_word_from_frequency(total_word_list, possible_guesses, frequency_map);
   # IO.puts("Best guess from non-pruned list below");
   # IO.inspect(best_guess_not_pruned);
 
@@ -47,10 +47,10 @@ defmodule GameLoop do
   end
 
   def create_feedback_tuple(best_guess, feedback) do
-    best_guess 
-      |> String.graphemes() 
-      |> Enum.with_index(0) 
-      |> Enum.zip(String.graphemes(feedback)) 
+    best_guess
+      |> String.graphemes()
+      |> Enum.with_index(0)
+      |> Enum.zip(String.graphemes(feedback))
       |> Enum.map(fn {{letter, index}, feedback} -> {letter, index, feedback} end)
   end
 
@@ -66,20 +66,39 @@ defmodule GameLoop do
   end
 
   def prune_possible_word_list(guess_letter_index_feedback, possible_word_list) do
-    letters_to_remove = 
+    letters_to_remove =
       guess_letter_index_feedback
       |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "B" end)
-      |> Enum.map(fn {letter, _index, _fb} -> letter end);
-      
-    word_list_removed_blacks = Enum.reject(possible_word_list, fn word -> 
+      |> Enum.map(fn {letter, _index, _feedback} -> letter end);
+
+    word_list_removed_blacks = Enum.reject(possible_word_list, fn word ->
       String.contains?(word, letters_to_remove)
     end)
-    #positions_to_remove = yellow_letters(best_guess, feedback);
-  # IO.puts("----------------------------------------- wee woo wee woo");
-  #IO.inspect(positions_to_remove);
-     #word_list_removed_yellows = Enum.reject(word_list_removed_blacks, fn word ->
-      # end)
-  #new_word_list
-    word_list_removed_blacks
+
+    positions_to_remove = 
+      guess_letter_index_feedback
+      |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "Y" end)
+      |> Enum.map(fn {letter, index, _feedback} -> {letter, index} end);
+
+    word_list_removed_yellows = Enum.reject(word_list_removed_blacks, fn word ->
+      letters_in_word = String.graphemes(word);
+      Enum.any?(positions_to_remove, fn {letter, index} -> 
+        Enum.at(letters_in_word, index) == letter
+      end)
+    end)
+
+    positions_to_fix = 
+      guess_letter_index_feedback
+      |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "G" end)
+      |> Enum.map(fn {letter, index, _feedback} -> {letter, index} end);
+
+    word_list_fixed_greens = Enum.filter(word_list_removed_yellows, fn word ->
+      letters_in_word = String.graphemes(word);
+      Enum.all?(positions_to_fix, fn {letter, index} -> 
+        Enum.at(letters_in_word, index) == letter
+      end)
+    end)
+    
+    word_list_fixed_greens
   end
 end
