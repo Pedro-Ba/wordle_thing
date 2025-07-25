@@ -1,6 +1,3 @@
-
-
-
 #probably need to rename this file lol
 
 word_list = WordleThing.read_word_list();

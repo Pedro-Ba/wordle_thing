@@ -25,15 +25,16 @@ defmodule GameLoop do
     possible_guesses = WordleThing.valid_words_from_top_letters(total_word_list, top_five_map);
     IO.inspect("Possible guesses below");
     IO.inspect(possible_guesses);
-    frequency_map = WordleThing.position_frequency_of_given_letters(possible_word_list, top_five_map);
+    #   frequency_map = WordleThing.position_frequency_of_given_letters(possible_word_list, top_five_map);[
+    frequency_map = WordleThing.position_frequency_of_given_letters(possible_word_list, Map.keys(alphabet_map));
     IO.puts("Frequency map below");
     IO.inspect(frequency_map);
-    best_guess = WordleThing.get_best_pruned_word_from_frequency(total_word_list, possible_guesses, frequency_map);
-    IO.puts("Best guess from pruned words below");
-    IO.inspect(best_guess);
-  # best_guess = WordleThing.get_best_all_word_from_frequency(total_word_list, possible_guesses, frequency_map);
-  # IO.puts("Best guess from non-pruned list below");
-  # IO.inspect(best_guess_not_pruned);
+    #   best_guess = WordleThing.get_best_pruned_word_from_frequency(total_word_list, possible_guesses, frequency_map);
+    #   IO.puts("Best guess from pruned words below");
+    #   IO.inspect(best_guess);
+   best_guess = WordleThing.get_best_all_word_from_frequency(total_word_list, possible_guesses, frequency_map, 0);
+   IO.puts("Best guess from non-pruned list below");
+   IO.inspect(best_guess);
 
     feedback = IO.gets("Enter colors (GYB): ") |> String.trim();
     if feedback == "GGGGG" do
