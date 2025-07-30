@@ -97,7 +97,7 @@ defmodule WordleThing do
     end)
   end
 
-  def get_best_all_word_from_frequency(word_list, _possible_guesses, letter_map, attempts) do
+  def get_best_all_word_from_frequency(word_list, letter_map, attempts) do
     word_values = Enum.map(word_list, fn word ->
       letters_word = String.graphemes(word) |> Enum.with_index();
       word_score = Enum.reduce(letters_word, 0, fn {letter, index}, acc ->
@@ -105,8 +105,7 @@ defmodule WordleThing do
       end)
     {word, word_score}
     end)
-  
-    IO.inspect(word_values);
+  #IO.inspect(word_values);
     sorted_word_values = Enum.sort_by(word_values, fn {_word, score} -> score end, :desc);
     if attempts > 2 do
       List.first(sorted_word_values)
@@ -127,7 +126,7 @@ defmodule WordleThing do
       end)
       {word, word_score}
     end)
-    IO.inspect(word_values);
+  #IO.inspect(word_values);
     best_word = Enum.max_by(word_values, fn{_k, v} -> v end);
     best_word
   end
