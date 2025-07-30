@@ -31,7 +31,7 @@ defmodule GameLoop do
         new_alphabet_map = prune_alphabet(guess_letter_index_feedback, alphabet_map);
         total_word_list = List.delete(total_word_list, elem(best_guess, 0));
         new_possible_word_list = prune_possible_word_list(guess_letter_index_feedback, possible_word_list);
-        gameloop(total_word_list, new_possible_word_list, new_alphabet_map, attempts, letters_in_word);
+        gameloop(total_word_list, new_possible_word_list, new_alphabet_map, attempts+1, letters_in_word);
     end
   end
 
@@ -64,7 +64,6 @@ defmodule GameLoop do
       |> Enum.reduce(alphabet_map, fn {letter, _index, _feedback}, acc ->
         Map.delete(acc, letter)
       end);
-    #You don't remove Yellow letters from the alphabet, you remove words that have them in that position from the possible word list. Either way, this should impact the frequency map. If we were not using the whole alphabet count, but a frequency map, then we would need to alter the frequency map. Keep in mind for later.
     new_alphabet_map
   end
 
@@ -87,6 +86,18 @@ defmodule GameLoop do
       letters_in_word = String.graphemes(word);
       Enum.any?(positions_to_remove, fn {letter, index} -> 
         Enum.at(letters_in_word, index) == letter
+      end)
+    end)
+
+    yellow_letters =
+      guess_letter_index_feedback
+      |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "Y" end)
+      |> Enum.map(fn {letter, _index, _feedback} -> letter end);
+
+    word_list_guaranteed_yellows = Enum.filter(word_list_removed_yellows, fn word ->
+      letters_in_word = String.graphemes(word);
+      Enum.all?(yellow_letters, fn letter ->
+        String.contains?(word, letter);
       end)
     end)
 
