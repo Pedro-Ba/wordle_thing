@@ -13,7 +13,7 @@ defmodule GameLoop do
 
   """
   #letters_in_word is tentative; remove and place it into alphabet_map on a future rewrite.
-  def gameloop(total_word_list, possible_word_list, alphabet_map, attempts, letters_in_word) do
+  def gameloop(total_word_list, possible_word_list, alphabet_map, attempts, green_letters) do
 #   frequency_map = WordleThing.position_frequency_of_given_letters(possible_word_list, top_five_map);[
     frequency_map = WordleThing.position_frequency_of_given_letters(possible_word_list, Map.keys(alphabet_map));
     IO.puts("Frequency map below");
@@ -28,10 +28,14 @@ defmodule GameLoop do
         IO.puts("Guessed the word; game over")
     else 
         guess_letter_index_feedback = create_feedback_tuple(elem(best_guess, 0), feedback);
+        green_letters = 
+          guess_letter_index_feedback
+          |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "G" end)
+          |> Enum.map(fn {letter, index, _feedback} -> {letter} end);
         new_alphabet_map = prune_alphabet(guess_letter_index_feedback, alphabet_map);
         total_word_list = List.delete(total_word_list, elem(best_guess, 0));
         new_possible_word_list = prune_possible_word_list(guess_letter_index_feedback, possible_word_list);
-        gameloop(total_word_list, new_possible_word_list, new_alphabet_map, attempts+1, letters_in_word);
+        gameloop(total_word_list, new_possible_word_list, new_alphabet_map, attempts+1, green_letters);
     end
   end
 
