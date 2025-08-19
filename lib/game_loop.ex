@@ -31,7 +31,7 @@ defmodule GameLoop do
         green_letters = 
           guess_letter_index_feedback
           |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "G" end)
-          |> Enum.map(fn {letter, index, _feedback} -> {letter} end);
+          |> Enum.map(fn {letter, _index, _feedback} -> {letter} end);
         new_alphabet_map = prune_alphabet(guess_letter_index_feedback, alphabet_map);
         total_word_list = List.delete(total_word_list, elem(best_guess, 0));
         new_possible_word_list = prune_possible_word_list(guess_letter_index_feedback, possible_word_list);
@@ -99,7 +99,6 @@ defmodule GameLoop do
       |> Enum.map(fn {letter, _index, _feedback} -> letter end);
 
     word_list_guaranteed_yellows = Enum.filter(word_list_removed_yellows, fn word ->
-      letters_in_word = String.graphemes(word);
       Enum.all?(yellow_letters, fn letter ->
         String.contains?(word, letter);
       end)
