@@ -12,7 +12,6 @@ defmodule GameLoop do
   :world
 
   """
-  #letters_in_word is tentative; remove and place it into alphabet_map on a future rewrite.
   def gameloop(total_word_list, possible_word_list, alphabet_map, attempts, green_letters) do
 #   frequency_map = WordleThing.position_frequency_of_given_letters(possible_word_list, top_five_map);[
     frequency_map = WordleThing.position_frequency_of_given_letters(possible_word_list, Map.keys(alphabet_map));
@@ -41,16 +40,7 @@ defmodule GameLoop do
 
   def guess_loop(total_word_list, frequency_map, attempts) do
     best_guess = WordleThing.get_best_all_word_from_frequency(total_word_list, frequency_map, attempts);
-    IO.puts("Best guess from non-pruned list below");
-    IO.inspect(best_guess);
-    confirmation = IO.gets("Is this a valid wordle word? Y/N: ") |> String.trim() |> String.upcase()
-
-    if confirmation == "N" do
-      new_word_list = List.delete(total_word_list, elem(best_guess, 0))
-      guess_loop(new_word_list, frequency_map, attempts)
-    else
-      {best_guess, total_word_list}
-    end
+    {best_guess, total_word_list}
   end
 
   def create_feedback_tuple(best_guess, feedback) do

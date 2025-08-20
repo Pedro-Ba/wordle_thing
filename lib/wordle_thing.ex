@@ -13,8 +13,8 @@ defmodule WordleThing do
 
   """
   def read_word_list do
-    {:ok, word_list} = File.read(".\\normalize_dictionary\\wordle_word_list.txt");
-    word_list = word_list |> String.split("\n", trim: true);
+    {:ok, word_list} = File.read(".\\normalize_dictionary\\wordle_actual_list.txt");
+    word_list = word_list |> String.split("\n", trim: true) |> Enum.map(&String.trim/1);
     word_list
   end
 
