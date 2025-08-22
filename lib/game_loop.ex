@@ -30,7 +30,8 @@ defmodule GameLoop do
       {_letter_guess, letter_target}, acc ->
         Map.update(acc, letter_target, 1, &(&1 + 1))
     end)
-
+    
+    IO.inspect(non_green_letters);
     feedback =
     Enum.zip(guess_letters, greens)
     |> Enum.map(fn
