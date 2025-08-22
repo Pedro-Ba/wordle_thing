@@ -1,21 +1,11 @@
 # WordleThing
 
-**TODO: Add description**
+Wordle solver in Elixir. Can be ran as
 
-## Installation
+mix run .\game\_thing.exs
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `wordle_thing` to your list of dependencies in `mix.exs`:
+Optional flag:
 
-```elixir
-def deps do
-  [
-    {:wordle_thing, "~> 0.1.0"}
-  ]
-end
-```
+--word=\<any 5 letter word>
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/wordle_thing>.
-
+Still a work in progress
