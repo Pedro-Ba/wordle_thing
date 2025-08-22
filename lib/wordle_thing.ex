@@ -107,7 +107,7 @@ defmodule WordleThing do
     end)
   #IO.inspect(word_values);
     sorted_word_values = Enum.sort_by(word_values, fn {_word, score} -> score end, :desc);
-    if attempts > 2 do
+    if attempts > 5 do
       List.first(sorted_word_values)
     else
       Enum.find(sorted_word_values, fn {word, _score} ->
