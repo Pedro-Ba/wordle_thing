@@ -9,7 +9,7 @@ case Keyword.get(parsed, :word) do
     GameLoop.gameloop(word_list, word_list, alphabet_map, 1, []);
   word ->
     IO.puts("Starting solver on word #{word}...");
-    GameLoop.gameloop(word_list, word_list, alphabet_map, 1, [], String.graphemes(word));
+    GameLoop.solveloop(word_list, word_list, alphabet_map, 1, [], String.graphemes(word));
 end
 
 

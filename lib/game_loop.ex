@@ -21,7 +21,7 @@ defmodule GameLoop do
       {letter_guess, letter_target} when letter_guess == letter_target -> "G"
       _ -> nil
     end)
-
+    #letters of the word that were not hit
     non_green_letters =
     Enum.zip(guess_letters, target_letters)
     |> Enum.reduce(%{}, fn
@@ -31,7 +31,6 @@ defmodule GameLoop do
         Map.update(acc, letter_target, 1, &(&1 + 1))
     end)
     
-    IO.inspect(non_green_letters);
     feedback =
     Enum.zip(guess_letters, greens)
     |> Enum.map(fn
@@ -49,10 +48,10 @@ defmodule GameLoop do
     feedback |> Enum.join()
 end
 
-  def gameloop(total_word_list, possible_word_list, alphabet_map, attempts, green_letters, word_letters) do
+  def solveloop(total_word_list, possible_word_list, alphabet_map, attempts, green_letters, word_letters) do
     frequency_map = WordleThing.position_frequency_of_given_letters(possible_word_list, Map.keys(alphabet_map));
   # IO.puts("Frequency map below");
-  # IO.inspect(frequency_map);
+    IO.inspect(frequency_map);
 
     {best_guess, total_word_list} = guess_loop(total_word_list, frequency_map, attempts);
   # IO.puts("Using the following guess: ");
@@ -75,21 +74,22 @@ end
           guess_letter_index_feedback
           |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "G" end)
           |> Enum.map(fn {letter, _index, _feedback} -> {letter} end);
-        new_alphabet_map = prune_alphabet(guess_letter_index_feedback, alphabet_map);
         total_word_list = List.delete(total_word_list, elem(best_guess, 0));
         new_possible_word_list = prune_possible_word_list(guess_letter_index_feedback, possible_word_list);
-        gameloop(total_word_list, new_possible_word_list, new_alphabet_map, attempts+1, green_letters, word_letters);
+        IO.puts("New possible word list");
+        IO.inspect(new_possible_word_list);
+        solveloop(total_word_list, new_possible_word_list, alphabet_map, attempts+1, green_letters, word_letters);
    end
   end
 
   def gameloop(total_word_list, possible_word_list, alphabet_map, attempts, green_letters) do
     frequency_map = WordleThing.position_frequency_of_given_letters(possible_word_list, Map.keys(alphabet_map));
     IO.puts("Frequency map below");
-    IO.inspect(frequency_map);
+  #IO.inspect(frequency_map);
 
     {best_guess, total_word_list} = guess_loop(total_word_list, frequency_map, attempts);
     IO.puts("Using the following guess: ");
-    IO.inspect(best_guess);
+  #IO.inspect(best_guess);
 
     feedback = IO.gets("Enter colors (GYB): ") |> String.trim() |> String.upcase();
     if feedback == "GGGGG" do
@@ -100,10 +100,9 @@ end
           guess_letter_index_feedback
           |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "G" end)
           |> Enum.map(fn {letter, _index, _feedback} -> {letter} end);
-        new_alphabet_map = prune_alphabet(guess_letter_index_feedback, alphabet_map);
         total_word_list = List.delete(total_word_list, elem(best_guess, 0));
         new_possible_word_list = prune_possible_word_list(guess_letter_index_feedback, possible_word_list);
-        gameloop(total_word_list, new_possible_word_list, new_alphabet_map, attempts+1, green_letters);
+        gameloop(total_word_list, new_possible_word_list, alphabet_map, attempts+1, green_letters);
     end
   end
 
@@ -120,25 +119,33 @@ end
       |> Enum.map(fn {{letter, index}, feedback} -> {letter, index, feedback} end)
   end
 
-  def prune_alphabet(guess_letter_index_feedback, alphabet_map) do
-    new_alphabet_map =
-      guess_letter_index_feedback
-      |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "B" end)
-      |> Enum.reduce(alphabet_map, fn {letter, _index, _feedback}, acc ->
-        Map.delete(acc, letter)
-      end);
-    new_alphabet_map
-  end
-
   def prune_possible_word_list(guess_letter_index_feedback, possible_word_list) do
-    letters_to_remove =
+    green_letters =
+      guess_letter_index_feedback
+      |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "G" end)
+
+    yellow_letters =
+      guess_letter_index_feedback
+      |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "Y" end)
+
+    black_letters_remove_all =
       guess_letter_index_feedback
       |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "B" end)
-      |> Enum.map(fn {letter, _index, _feedback} -> letter end);
+|> Enum.reject(fn {letter, _index, _feedback} -> letter in Enum.map(yellow_letters, fn {l, _i, _f} -> l end) or letter in Enum.map(green_letters, fn {l, _i, _f} -> l end) end)
+    IO.puts("Black letters to fully remove from list");
+    IO.inspect(black_letters_remove_all);
+
+    black_letters_remove_pos =
+      guess_letter_index_feedback
+      |> Enum.filter(fn {_letter, _index, feedback} -> feedback == "B" end)
+      |> Enum.filter(fn {letter, _index, _feedback} -> letter in Enum.map(yellow_letters, fn {l, _i, _f} -> l end) or letter in Enum.map(green_letters, fn {l, _i, _f} -> l end) end)
+    IO.puts("Black letters to remove from spot (black letters that appear somewhere else in the word)");
+    IO.inspect(black_letters_remove_pos);
 
     word_list_removed_blacks = Enum.reject(possible_word_list, fn word ->
-      String.contains?(word, letters_to_remove)
+      String.contains?(word, Enum.map(black_letters_remove_all, fn {letter, _index, _feedback} -> letter end))
     end)
+    IO.inspect(word_list_removed_blacks);
 
     positions_to_remove = 
       guess_letter_index_feedback
@@ -175,6 +182,7 @@ end
       end)
     end)
     
+    IO.inspect(word_list_fixed_greens)
     word_list_fixed_greens
   end
 end
