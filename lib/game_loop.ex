@@ -85,11 +85,11 @@ end
   def gameloop(total_word_list, possible_word_list, alphabet_map, attempts, green_letters) do
     frequency_map = WordleThing.position_frequency_of_given_letters(possible_word_list, Map.keys(alphabet_map));
     IO.puts("Frequency map below");
-  #IO.inspect(frequency_map);
+    IO.inspect(frequency_map);
 
     {best_guess, total_word_list} = guess_loop(total_word_list, frequency_map, attempts);
     IO.puts("Using the following guess: ");
-  #IO.inspect(best_guess);
+    IO.inspect(best_guess);
 
     feedback = IO.gets("Enter colors (GYB): ") |> String.trim() |> String.upcase();
     if feedback == "GGGGG" do
@@ -145,7 +145,7 @@ end
     word_list_removed_blacks = Enum.reject(possible_word_list, fn word ->
       String.contains?(word, Enum.map(black_letters_remove_all, fn {letter, _index, _feedback} -> letter end))
     end)
-    IO.inspect(word_list_removed_blacks);
+#IO.inspect(word_list_removed_blacks);
 
     positions_to_remove = 
       guess_letter_index_feedback
@@ -182,7 +182,7 @@ end
       end)
     end)
     
-    IO.inspect(word_list_fixed_greens)
+#IO.inspect(word_list_fixed_greens)
     word_list_fixed_greens
   end
 end

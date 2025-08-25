@@ -108,27 +108,15 @@ defmodule WordleThing do
   #IO.inspect(word_values);
     sorted_word_values = Enum.sort_by(word_values, fn {_word, score} -> score end, :desc);
     if attempts > 5 do
+    # IO.inspect(sorted_word_values)
       List.first(sorted_word_values)
     else
+    # IO.inspect(sorted_word_values)
       Enum.find(sorted_word_values, fn {word, _score} ->
         graphemes = String.graphemes(word)
         Enum.uniq(graphemes) |> length() == length(graphemes)
       end)
     end
-  end
-
-
-  def get_best_pruned_word_from_frequency(_word_list, possible_guesses, letter_map) do
-    word_values = Enum.map(possible_guesses, fn word -> 
-      letters_word = String.graphemes(word) |> Enum.with_index();
-      word_score = Enum.reduce(letters_word, 0, fn {letter, index}, acc ->
-        acc + Map.get(letter_map[index], letter, 0);
-      end)
-      {word, word_score}
-    end)
-  #IO.inspect(word_values);
-    best_word = Enum.max_by(word_values, fn{_k, v} -> v end);
-    best_word
   end
 
   def print_alphabet_map(alphabet_map) do
