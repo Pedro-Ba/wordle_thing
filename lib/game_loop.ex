@@ -22,6 +22,7 @@ defmodule GameLoop do
       _ -> nil
     end)
     #letters of the word that were not hit
+    
     non_green_letters =
     Enum.zip(guess_letters, target_letters)
     |> Enum.reduce(%{}, fn
